@@ -26,10 +26,35 @@ class MyTests(qutest.QUT_ST):
 
 if __name__ == '__main__':
 
-    aaa = MyTests(backend=AerSimulator())
-    aaa.run(quantum_subprogram)
+    print("---------------------------------")
+    print("Test on the backend without noise")
+    print("---------------------------------")
 
-    MyTests(backend=AerSimulator.from_backend(FakePerth())).run(quantum_subprogram)
-    MyTests(backend=AerSimulator.from_backend(FakePerth())).run(quantum_subprogram_mut1)
-    MyTests(backend=AerSimulator.from_backend(FakePerth())).run(quantum_subprogram_mut2)
+    MyTests(backend=AerSimulator(),
+            shots=2000
+            ).run(quantum_subprogram)
+
+    MyTests(backend=AerSimulator(),
+            shots=2000
+            ).run(quantum_subprogram_mut1)
+
+    MyTests(backend=AerSimulator(),
+            shots=2000
+            ).run(quantum_subprogram_mut2)
+
+    print("---------------------------------")
+    print("Test on the backend with noise")
+    print("---------------------------------")
+
+    MyTests(backend=AerSimulator.from_backend(FakePerth()),
+            shots=2000
+            ).run(quantum_subprogram)
+
+    MyTests(backend=AerSimulator.from_backend(FakePerth()),
+            shots=2000
+            ).run(quantum_subprogram_mut1)
+
+    MyTests(backend=AerSimulator.from_backend(FakePerth()),
+            shots=2000
+            ).run(quantum_subprogram_mut2)
 

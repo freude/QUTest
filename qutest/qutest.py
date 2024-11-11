@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import numpy as np
 from colorama import Fore
 from qiskit_aer import AerSimulator
 from qiskit_ibm_runtime.fake_provider import FakePerth
@@ -12,7 +13,6 @@ class QUT(ABC):
 
         default_backend = AerSimulator.from_backend(FakePerth())
         self.backend = kwargs.get('backend', default_backend)
-
 
     @abstractmethod
     def pre(self):
@@ -65,6 +65,9 @@ class QUT_ST(QUT, ABC):
 
         super().__init__(**kwargs)
         self.experiment = StateTomography
+        self.shots = kwargs.get('shots', 2000)
+        self.basis_indices = kwargs.get('basis_indices', None)
+
 
     @abstractmethod
     def pre(self):
@@ -79,17 +82,17 @@ class QUT_ST(QUT, ABC):
         fid = state_fidelity(arg1, arg2)
 
         if fid > 0.5:
-            print(Fore.GREEN + '[PASSED]: The fidelity of two states is {}'.format(fid))
+            print(Fore.GREEN + '[PASSED]: The fidelity of two states is {}'.format(fid) + Fore.RESET)
         else:
-            print(Fore.RED + '[FAILED]: The fidelity of two states is {}'.format(fid))
+            print(Fore.RED + '[FAILED]: The fidelity of two states is {}'.format(fid) + Fore.RESET)
 
     def run(self, prog):
 
         qc = self.pre()
         qc = prog(qc)
 
-        qstexp = StateTomography(qc)
-        qstdata = qstexp.run(self.backend, seed_simulation=100, shots=5000).block_for_results()
+        qstexp = self.experiment(qc, basis_indices=self.basis_indices)
+        qstdata = qstexp.run(self.backend, seed_simulation=100, shots=self.shots).block_for_results()
         res = qstdata.analysis_results("state").value
 
         exp = self.post()
