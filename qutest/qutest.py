@@ -1,20 +1,9 @@
 from abc import ABC, abstractmethod
-import logging
 from colorama import Fore
 from qiskit_aer import AerSimulator
 from qiskit_ibm_runtime.fake_provider import FakePerth
 from qiskit_experiments.library import StateTomography, ProcessTomography
 from qiskit.quantum_info import state_fidelity
-
-
-logger = logging.getLogger("mylogger")
-# hdlr = logging.StreamHandler()
-# # fhdlr = logging.FileHandler("myapp.log")
-# logger.addHandler(hdlr)
-# # logger.addHandler(fhdlr)
-# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-# hdlr.setFormatter(formatter)
-logger.setLevel(logging.DEBUG)
 
 
 class QUT(ABC):
