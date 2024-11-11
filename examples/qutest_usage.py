@@ -1,6 +1,8 @@
 import qutest
 import numpy as np
 from code_samples import *
+import warnings
+warnings.filterwarnings("ignore")
 
 class MyTests(qutest.QUT_ST):
 
@@ -24,5 +26,10 @@ class MyTests(qutest.QUT_ST):
 
 if __name__ == '__main__':
 
-    result = MyTests(backend=AerSimulator.from_backend(FakePerth())).run(quantum_subprogram_mut2)
-    print(result)
+    aaa = MyTests(backend=AerSimulator())
+    aaa.run(quantum_subprogram)
+
+    MyTests(backend=AerSimulator.from_backend(FakePerth())).run(quantum_subprogram)
+    MyTests(backend=AerSimulator.from_backend(FakePerth())).run(quantum_subprogram_mut1)
+    MyTests(backend=AerSimulator.from_backend(FakePerth())).run(quantum_subprogram_mut2)
+
