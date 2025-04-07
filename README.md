@@ -25,25 +25,10 @@ import qutest
 from qiskit_aer import AerSimulator
 
 
-def quantum_subprogram1(circuit):
+def quantum_subprogram(circuit):
     """Tested quantum subroutine -
        random number generator with uniform distribution"""
-    
     circuit.rx(np.pi / 2, 0)
-    return circuit
-
-def quantum_subprogram2(circuit):
-    """Tested quantum subroutine -
-       random number generator with uniform distribution"""
-    
-    circuit.rx(np.pi / 4, 0)
-    return circuit
-
-def quantum_subprogram3(circuit):
-    """Tested quantum subroutine -
-       random number generator with uniform distribution"""
-    
-    circuit.rx(np.pi, 0)
     return circuit
 
 
@@ -62,9 +47,7 @@ class MyTests(qutest.QUT_PROJ):
     
 
 # run tests
-MyTests(backend=AerSimulator(), shots=2000).run(quantum_subprogram1)
-MyTests(backend=AerSimulator(), shots=2000).run(quantum_subprogram2)
-MyTests(backend=AerSimulator(), shots=2000).run(quantum_subprogram3)
+MyTests(backend=AerSimulator(), shots=2000).run(quantum_subprogram)
 ```
 
 This code should produce an output similar to the following:
