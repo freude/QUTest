@@ -53,5 +53,5 @@ MyTests(backend=AerSimulator(), shots=2000).run(quantum_subprogram)
 This code should produce an output similar to the following:
 
 ```
-[PASSED]: R^2 score s is 0.9999730007829774
+[PASSED]: R^2 score is 0.9999730007829774
 ```
