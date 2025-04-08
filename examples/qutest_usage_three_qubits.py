@@ -1,7 +1,7 @@
 import qutest
 import numpy as np
 from qiskit.quantum_info import Choi, PTM
-from code_samples import *
+from code_samples_three_qubits import *
 import warnings
 import matplotlib.pyplot as plt
 import matplotlib as mpl

@@ -32,7 +32,7 @@ pytz==2024.2
 PyYAML==6.0.2
 qiskit==1.2.4
 qiskit-aer==0.15.1
-qiskit-experiments==0.8.0
+qiskit-experiments
 qiskit-ibm-experiment==0.4.8
 qiskit-ibm-runtime==0.33.1
 requests==2.32.3
