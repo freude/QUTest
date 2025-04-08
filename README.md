@@ -54,6 +54,4 @@ This code should produce an output similar to the following:
 
 ```
 [PASSED]: R^2 score s is 0.9999730007829774
-[FAILED]: R^2 score is 0.4034846478435792
-[FAILED]: R^2 score is 0.25000037500000005
 ```

@@ -232,7 +232,7 @@ class QUT_PROJ(QUT, ABC):
         self.data['fid'] = fid
 
         if fid > 0.5:
-            print(Fore.GREEN + '[PASSED]: R^2 score s is {}'.format(fid) + Fore.RESET)
+            print(Fore.GREEN + '[PASSED]: R^2 score is {}'.format(fid) + Fore.RESET)
         else:
             print(Fore.RED + '[FAILED]: R^2 score is {}'.format(fid) + Fore.RESET)
 
