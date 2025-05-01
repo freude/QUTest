@@ -195,12 +195,12 @@ class QUT_PROJ(QUT, ABC):
         # arg1 = np.copy(a1)
         # arg2 = np.copy(a2)
 
-        arg1 = np.array(arg1) + 0.001
-        arg2 = np.array(arg2) + 0.001
+        arg1 = np.array(arg1) + 0.0001
+        arg2 = np.array(arg2) + 0.0001
 
         ind = np.where(arg2 != 0)
 
-        arg1 = arg1[ind]
+        arg1 = arg1[ind] / self.shots
         arg2 = arg2[ind]
 
         fid = r2_score(arg1, arg2, force_finite=True)
@@ -215,10 +215,15 @@ class QUT_PROJ(QUT, ABC):
             fid = 0
 
         # import matplotlib.pyplot as plt
+        # plt.figure(figsize=(5, 3))
+        # plt.rcParams.update({'font.size': 12})
+        # from matplotlib.ticker import StrMethodFormatter
+        # plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.3f}'))
         # plt.plot(arg1)
         # plt.plot(arg2)
+        # plt.tick_params(direction="in")
         # plt.show()
-        #
+
         # fid = chisquare(f_obs=arg1, f_exp=arg2, sum_check=False)
         # fid = fid.pvalue
         # fid = np.exp(-fid.statistic)

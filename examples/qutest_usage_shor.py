@@ -10,7 +10,7 @@ from qiskit_ibm_runtime.fake_provider import FakeVigoV2, FakePerth, FakeSydneyV2
 from qiskit_aer.noise import NoiseModel
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.quantum_info import DensityMatrix
-from code_samples_shor import mod_mult_gate_cirquit, fourier, fourier_ground_truth
+from code_samples_shor import mod_mult_cirquit, fourier, fourier_ground_truth, fourier_ground_truth1
 
 
 warnings.filterwarnings("ignore")
@@ -40,7 +40,8 @@ class MyTests(qutest.QUT_ST):
         circuit.h(0)
         circuit.x(0)
 
-        self.params = [a, 0, N, control[0], target]
+        # self.params = [a, 0, N, control[0], target]
+        self.params = [1, 9]
 
         return circuit
 
@@ -74,7 +75,8 @@ class MyTests_f(qutest.qutest.QUT_PROJ):
         keys = make_keys(8)
         size = len(keys)
         x = np.linspace(0, np.pi, size, endpoint=False)
-        values = fourier_ground_truth(x, self.shots)
+        values = fourier_ground_truth1(x, self.shots)
+
         ans = dict(zip(keys, values))
         return list(ans.values())
 
@@ -116,7 +118,7 @@ def test1(shots):
     test = MyTests(backend=AerSimulator(),
                    shots=shots,
                    measurement_indices=[8, 9, 10, 11])
-    test.run(mod_mult_gate_cirquit)
+    test.run(mod_mult_cirquit)
 
     return test
 
@@ -133,7 +135,7 @@ def test1_with_noise(shots):
     test = MyTests(backend=AerSimulator(noise_model=noise_model),
                    shots=shots,
                    measurement_indices=[8, 9, 10, 11])
-    test.run(mod_mult_gate_cirquit)
+    test.run(mod_mult_cirquit)
 
     return test
 
@@ -162,12 +164,16 @@ def test_suit(test_ref, test_ref_noise):
     num_shots = np.arange(10) + 1
     num_shots1 = np.arange(20, 100, 10)
     num_shots2 = np.arange(200, 1000, 100)
-    num_shots3 = np.array([1e3, 1e4, 1e5])
+    num_shots3 = np.array([1e3, 1e4, 1e5, 1e6, 1e7])
     num_shots = np.concatenate((num_shots, num_shots1, num_shots2, num_shots3))
+
+    # num_shots = np.array([10, 1e2, 1e3, 1e4, 1e5])
     num_shots.sort()
 
     res = []
     res_noise = []
+    times = []
+    times_noise = []
 
     for shots in num_shots:
 
@@ -179,6 +185,7 @@ def test_suit(test_ref, test_ref_noise):
 
         test = test_ref(shots)
         res.append(test.data['fid'])
+        times.append(test.data['time'] / shots)
 
         print("---------------------------------")
         print("Test on the backend with noise")
@@ -186,19 +193,27 @@ def test_suit(test_ref, test_ref_noise):
 
         test = test_ref_noise(shots)
         res_noise.append(test.data['fid'])
+        times_noise.append(test.data['time'] / shots)
 
-    return num_shots, res, res_noise
+    return num_shots, res, res_noise, times, times_noise
 
 def main():
 
     # testing controlled unitary using the protocol
     # based on the quantum state tomography
-    # num_shots, data1, data2 = test_suit(test1, test1_with_noise)
+    num_shots, data1, data2, times, times_noise = test_suit(test1, test1_with_noise)
+    print(times)
+    plt.plot(times)
+    plt.plot(times_noise)
+    plt.show()
 
     # testing IQFT using the protocol based on
     # R^2 statistical tests
-    num_shots, data3, data4 = test_suit(test2, test2_with_noise)
-
+    num_shots, data3, data4, times, times_noise = test_suit(test2, test2_with_noise)
+    print(times)
+    plt.plot(times)
+    plt.plot(times_noise)
+    plt.show()
     plot(num_shots, data3, data4, data3, data4)
 
 
