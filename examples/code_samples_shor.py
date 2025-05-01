@@ -7,36 +7,8 @@ from qiskit.circuit.library import UnitaryGate
 from qiskit.circuit.library import QFT
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_aer import AerSimulator
-from qiskit_aer.noise import NoiseModel
-from qiskit_ibm_runtime.fake_provider import FakeVigoV2, FakePerth, FakeSydneyV2, FakeMelbourneV2
-from mat2latex import matrix2latex
-from qiskit.circuit.library import Permutation
-from qiskit_aer import noise
-from qiskit_aer.noise import (NoiseModel, QuantumError, ReadoutError,
-    pauli_error, depolarizing_error, thermal_relaxation_error)
+from noise_models import noise_model
 
-
-# create a bit flip error with probability p = 0.01
-# p = 0.04
-# my_bitflip = noise.pauli_error([('X', p), ('I', 1 - p)])
-#
-# # create an empty noise model
-# noise_model = noise.NoiseModel()
-#
-# # attach the error to the hadamard gate 'h'
-# noise_model.add_quantum_error(my_bitflip, ['h'], [0])
-
-#-------------------------------------------------------------
-noise_model = NoiseModel()
-
-# Add depolarizing error to all single qubit u1, u2, u3 gates
-error = depolarizing_error(0.05, 1)
-noise_model.add_all_qubit_quantum_error(error, ['u1', 'u2', 'u3'])
-#-------------------------------------------------------------
-
-# backend = FakeMelbourneV2()
-# noise_model = NoiseModel.from_backend(backend)
-noise_model = None
 
 def fourier_ground_truth(x, shots):
     """"""

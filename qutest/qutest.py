@@ -121,11 +121,11 @@ class QUT_ST(QUT, ABC):
 
         fid = state_fidelity(arg1, arg2)
 
-        # import matplotlib.pyplot as plt
-        # plt.imshow(np.abs(arg1.data))
-        # plt.show()
-        # plt.imshow(np.abs(arg2.data))
-        # plt.show()
+        import matplotlib.pyplot as plt
+        plt.imshow(np.abs(arg1.data))
+        plt.show()
+        plt.imshow(np.abs(arg2.data))
+        plt.show()
 
         # fid = np.max(np.abs(arg1 - arg2.data))
         # fid = np.sqrt(np.sum(np.abs(arg1 - arg2.data)**2))

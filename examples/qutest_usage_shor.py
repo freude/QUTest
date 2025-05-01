@@ -6,11 +6,10 @@ import numpy as np
 from math import gcd, floor, log
 import matplotlib.pyplot as plt
 from qutest.aux_function import make_keys
-from qiskit_ibm_runtime.fake_provider import FakeVigoV2, FakePerth, FakeSydneyV2, FakeTorontoV2, FakeSingaporeV2, FakeMelbourneV2
-from qiskit_aer.noise import NoiseModel
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.quantum_info import DensityMatrix
 from code_samples_shor import mod_mult_cirquit, fourier, fourier_ground_truth, fourier_ground_truth1
+from noise_models import noise_model
 
 
 warnings.filterwarnings("ignore")
@@ -23,7 +22,7 @@ class MyTests(qutest.QUT_ST):
     def pre(self):
 
         a = 2
-        N = 11
+        N = 9
 
         if gcd(a, N) > 1:
             raise Exception(f"Error: gcd({a},{N}) > 1")
@@ -41,7 +40,7 @@ class MyTests(qutest.QUT_ST):
         circuit.x(0)
 
         # self.params = [a, 0, N, control[0], target]
-        self.params = [1, 9]
+        self.params = [0, 9]
 
         return circuit
 
@@ -56,7 +55,7 @@ class MyTests_f(qutest.qutest.QUT_PROJ):
     def pre(self):
 
         a = 2
-        N = 11
+        N = 9
 
         if gcd(a, N) > 1:
             raise Exception(f"Error: gcd({a},{N}) > 1")
@@ -124,13 +123,9 @@ def test1(shots):
 
 def test1_with_noise(shots):
 
-    backend = FakeSydneyV2()
-
     # from rustworkx.visualization import mpl_draw
     # mpl_draw(backend.coupling_map.graph)
     # plt.show()
-
-    noise_model = NoiseModel.from_backend(backend)
 
     test = MyTests(backend=AerSimulator(noise_model=noise_model),
                    shots=shots,
@@ -149,9 +144,6 @@ def test2(shots):
 
 def test2_with_noise(shots):
 
-    backend = FakeSydneyV2()
-    noise_model = NoiseModel.from_backend(backend)
-
     test = MyTests_f(backend=AerSimulator(noise_model=noise_model),
                      shots=shots)
     test.run(fourier)
@@ -164,10 +156,10 @@ def test_suit(test_ref, test_ref_noise):
     num_shots = np.arange(10) + 1
     num_shots1 = np.arange(20, 100, 10)
     num_shots2 = np.arange(200, 1000, 100)
-    num_shots3 = np.array([1e3, 1e4, 1e5, 1e6, 1e7])
+    num_shots3 = np.array([1e3, 1e4, 1e5])
     num_shots = np.concatenate((num_shots, num_shots1, num_shots2, num_shots3))
 
-    # num_shots = np.array([10, 1e2, 1e3, 1e4, 1e5])
+    num_shots = np.array([1e3, 1e4, 1e5])
     num_shots.sort()
 
     res = []
@@ -201,6 +193,7 @@ def main():
 
     # testing controlled unitary using the protocol
     # based on the quantum state tomography
+
     num_shots, data1, data2, times, times_noise = test_suit(test1, test1_with_noise)
     print(times)
     plt.plot(times)
@@ -209,12 +202,13 @@ def main():
 
     # testing IQFT using the protocol based on
     # R^2 statistical tests
-    num_shots, data3, data4, times, times_noise = test_suit(test2, test2_with_noise)
-    print(times)
-    plt.plot(times)
-    plt.plot(times_noise)
-    plt.show()
-    plot(num_shots, data3, data4, data3, data4)
+
+    # num_shots, data3, data4, times, times_noise = test_suit(test2, test2_with_noise)
+    # print(times)
+    # plt.plot(times)
+    # plt.plot(times_noise)
+    # plt.show()
+    plot(num_shots, data1, data2, data1, data2)
 
 
 if __name__ == '__main__':
