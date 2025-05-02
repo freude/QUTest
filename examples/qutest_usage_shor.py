@@ -9,7 +9,7 @@ from qutest.aux_function import make_keys
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.quantum_info import DensityMatrix
 from code_samples_shor import mod_mult_cirquit, fourier, fourier_ground_truth, fourier_ground_truth1
-from noise_models import noise_model
+from noise_models import noise_model, noise_models
 
 
 warnings.filterwarnings("ignore")
@@ -18,6 +18,7 @@ warnings.filterwarnings("ignore")
 # cirquit = mod_mult_gate_cirquit(circuit, a, k, N, qubit, target)
 
 class MyTests(qutest.QUT_ST):
+    """Tests for Subroutine1 based on the quantum state tomography protocol"""
 
     def pre(self):
 
@@ -51,6 +52,7 @@ class MyTests(qutest.QUT_ST):
 
 
 class MyTests_f(qutest.qutest.QUT_PROJ):
+    """Tests for Subroutine1 based on the projective measurements and statistical tests protocol"""
 
     def pre(self):
 
@@ -80,14 +82,18 @@ class MyTests_f(qutest.qutest.QUT_PROJ):
         return list(ans.values())
 
 
-def plot(num_shots, data1, data2, data3, data4):
+def plot(num_shots, data1, data2):
+    """Two panel plots"""
+
+    styles = ['.-', '.--', '.--', '.--', '.--', '.--']
+    colors = ['darkgreen', 'g', 'forestgreen', 'limegreen', 'lime', 'darkgreen']
+    # colors = ['g', 'limegreen', 'limegreen', 'limegreen', 'limegreen', 'limegreen']
 
     fig, axs = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(8, 4))
 
-    axs[0].plot(num_shots, data1, '.g-')
-    axs[0].plot(num_shots, data2,  '.-', color='limegreen')
+    for j, item in enumerate(data1):
+        axs[0].plot(num_shots, item, styles[j], color=colors[j])
     axs[0].plot([np.min(num_shots), np.max(num_shots)], [0.5, 0.5], ':k')
-
     axs[0].set_xscale('log')
     axs[0].set_ylabel('Probability', fontsize=12)
     axs[0].set_title(r'Subroutine1, fidelity  $F(\rho_{B_n}, \rho_{expected})$')
@@ -95,10 +101,9 @@ def plot(num_shots, data1, data2, data3, data4):
     axs[0].set_xlabel('Num. shots', fontsize=12)
     axs[0].tick_params(direction="in")
 
-    axs[1].plot(num_shots, data3, '.g-')
-    axs[1].plot(num_shots, data4,  '.-', color='limegreen')
+    for j, item in enumerate(data2):
+        axs[1].plot(num_shots, item, styles[j], color=colors[j])
     axs[1].plot([np.min(num_shots), np.max(num_shots)], [0.5, 0.5], ':k')
-
     axs[1].set_xscale('log')
     axs[1].set_xlabel('Num. shots', fontsize=12)
     axs[1].tick_params(direction="in")
@@ -116,8 +121,7 @@ def test1(shots):
 
     test = MyTests(backend=AerSimulator(),
                    shots=shots,
-                   measurement_indices=[8, 9, 10, 11])
-    test.run(mod_mult_cirquit)
+                   measurement_indices=[8, 9, 10, 11]).run(mod_mult_cirquit)
 
     return test
 
@@ -129,26 +133,60 @@ def test1_with_noise(shots):
 
     test = MyTests(backend=AerSimulator(noise_model=noise_model),
                    shots=shots,
-                   measurement_indices=[8, 9, 10, 11])
-    test.run(mod_mult_cirquit)
+                   measurement_indices=[8, 9, 10, 11]).run(mod_mult_cirquit)
 
     return test
 
 def test2(shots):
 
     test = MyTests_f(backend=AerSimulator(),
-                     shots=shots)
-    test.run(fourier)
+                     shots=shots,
+                     title='Test on the backend with noise').run(fourier)
 
     return test
 
 def test2_with_noise(shots):
 
     test = MyTests_f(backend=AerSimulator(noise_model=noise_model),
-                     shots=shots)
-    test.run(fourier)
+                     shots=shots,
+                     title='Test on the backend with noise').run(fourier)
 
     return test
+
+
+def test_suit_subroutine1():
+
+    num_shots = np.arange(10) + 1
+    num_shots1 = np.arange(20, 100, 10)
+    num_shots2 = np.arange(200, 1000, 100)
+    num_shots3 = np.array([1e3, 1e4, 1e5])
+    num_shots = np.concatenate((num_shots, num_shots1, num_shots2, num_shots3))
+
+    # num_shots = np.array([1e3, 1e4, 1e5])
+    num_shots.sort()
+
+    ans_res = []
+    ans_times = []
+
+    for noise in noise_models:
+
+        res = []
+        times = []
+
+        for shots in num_shots:
+
+            test = MyTests(backend=AerSimulator(noise_model=noise_models[noise]),
+                           shots=shots,
+                           measurement_indices=[8, 9, 10, 11],
+                           title='Noise model is ' + noise).run(mod_mult_cirquit)
+
+            res.append(test.data['fid'])
+            times.append(test.data['time'] / shots)
+
+        ans_res.append(res)
+        ans_times.append(times)
+
+    return num_shots, ans_res, ans_times
 
 
 def test_suit(test_ref, test_ref_noise):
@@ -194,11 +232,8 @@ def main():
     # testing controlled unitary using the protocol
     # based on the quantum state tomography
 
-    num_shots, data1, data2, times, times_noise = test_suit(test1, test1_with_noise)
-    print(times)
-    plt.plot(times)
-    plt.plot(times_noise)
-    plt.show()
+    num_shots, data, times = test_suit(test1, test1_with_noise)
+    np.save('data_sub1.npy', data)
 
     # testing IQFT using the protocol based on
     # R^2 statistical tests
@@ -208,12 +243,36 @@ def main():
     # plt.plot(times)
     # plt.plot(times_noise)
     # plt.show()
-    plot(num_shots, data1, data2, data1, data2)
+    plot(num_shots, data, data)
+
+
+def main1():
+
+    # testing controlled unitary using the protocol
+    # based on the quantum state tomography
+
+    # num_shots, data1, times1 = test_suit_subroutine1()
+    # np.save('data_sub1.npy', data1)
+    # num_shots, data2, times2 = test_suit_subroutine2()
+
+
+    # testing IQFT using the protocol based on
+    # R^2 statistical tests
+
+    # num_shots, data3, data4, times, times_noise = test_suit(test2, test2_with_noise)
+    # print(times)
+    # plt.plot(times)
+    # plt.plot(times_noise)
+    # plt.show()
+
+    data1 = np.load('data_sub1.npy')
+    num_shots = np.load('num_shots.npy')
+    plot(num_shots, data1, data1)
 
 
 if __name__ == '__main__':
 
-    main()
+    main1()
 
 
 

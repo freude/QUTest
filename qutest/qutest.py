@@ -23,6 +23,9 @@ class QUT(ABC):
         default_backend = AerSimulator.from_backend(FakeSydneyV2())
         self.backend = kwargs.get('backend', default_backend)
         self.params = []
+        self.data = {}
+        self.title = kwargs.get('title', '')
+        self.shots = kwargs.get('shots', 2000)
 
     @abstractmethod
     def pre(self):
@@ -42,6 +45,10 @@ class QUT(ABC):
 
     def run(self, unit):
 
+        print("---------------------------------")
+        print("Test: " + self.title)
+        print("---------------------------------")
+
         qc = self.pre()
 
         try:
@@ -53,6 +60,8 @@ class QUT(ABC):
         res_expected = self.post()
         self.assertEqual(res, res_expected)
 
+        return self
+
 
 class QUT_PT(QUT, ABC):
 
@@ -60,8 +69,6 @@ class QUT_PT(QUT, ABC):
 
         super().__init__(**kwargs)
         self.experiment = ProcessTomography
-        self.shots = kwargs.get('shots', 2000)
-        self.data = {}
 
     @abstractmethod
     def pre(self):
@@ -102,11 +109,8 @@ class QUT_ST(QUT, ABC):
 
         super().__init__(**kwargs)
         self.experiment = StateTomography
-        self.shots = kwargs.get('shots', 2000)
         self.basis_indices = kwargs.get('basis_indices', None)
         self.measurement_indices = kwargs.get('measurement_indices', None)
-        self.data = {}
-        self.params = []
 
 
     @abstractmethod
@@ -121,11 +125,11 @@ class QUT_ST(QUT, ABC):
 
         fid = state_fidelity(arg1, arg2)
 
-        import matplotlib.pyplot as plt
-        plt.imshow(np.abs(arg1.data))
-        plt.show()
-        plt.imshow(np.abs(arg2.data))
-        plt.show()
+        # import matplotlib.pyplot as plt
+        # plt.imshow(np.abs(arg1.data))
+        # plt.show()
+        # plt.imshow(np.abs(arg2.data))
+        # plt.show()
 
         # fid = np.max(np.abs(arg1 - arg2.data))
         # fid = np.sqrt(np.sum(np.abs(arg1 - arg2.data)**2))
@@ -177,10 +181,6 @@ class QUT_PROJ(QUT, ABC):
 
         super().__init__(**kwargs)
         self.experiment = Proj
-        self.shots = kwargs.get('shots', 2000)
-        self.data = {}
-        self.params = []
-
 
     @abstractmethod
     def pre(self):
