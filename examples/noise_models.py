@@ -1,9 +1,5 @@
 import numpy as np
-from qiskit_ibm_runtime.fake_provider import FakeVigoV2, FakePerth, FakeSydneyV2, FakeTorontoV2, FakeSingaporeV2, FakeMelbourneV2
-from qiskit_aer.noise import NoiseModel
 from qiskit_ibm_runtime.fake_provider import FakeVigoV2, FakePerth, FakeSydneyV2, FakeMelbourneV2
-from mat2latex import matrix2latex
-from qiskit.circuit.library import Permutation
 from qiskit_aer import noise
 from qiskit_aer.noise import (NoiseModel, QuantumError, ReadoutError,
     pauli_error, depolarizing_error, thermal_relaxation_error)
@@ -87,5 +83,13 @@ noise_models = {'NoNoise': model0(),
                 'BitFlip2': model2(0.003),
                 'BitFlip3': model2(0.005),
                 'BitFlip4': model2(0.007),
+                'FakeSydneyV2': model1()
+                }
+
+noise_models = {'NoNoise': model0(),
+                # 'BitFlip1': model2(0.001),
+                # 'BitFlip2': model2(0.003),
+                # 'BitFlip3': model2(0.005),
+                # 'BitFlip4': model2(0.007),
                 'FakeSydneyV2': model1()
                 }
