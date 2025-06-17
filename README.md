@@ -9,8 +9,8 @@ The `qutest`  framework does not require additional quantum resources beyond tho
 ### Install from source
 
 ```bash
-git clone https://gitlab.com/freude1/qutest.git
-cd qutest
+git https://github.com/freude/QUTest.git
+cd QUTest
 pip install -r requirements.txt
 pip install .
 ```
