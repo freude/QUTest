@@ -1,14 +1,15 @@
+import subprocess
 import qutest
 import numpy as np
-from qiskit.quantum_info import Choi, PTM
 from code_samples_three_qubits import *
 import warnings
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.colors as colors
-from qutest.aux_function import likelihood
+from qutest import likelihood
 from qiskit_ibm_runtime.fake_provider import FakeSydneyV2
 from qiskit_aer.noise import NoiseModel
+from make_plots import make_plot
 
 
 warnings.filterwarnings("ignore")
@@ -16,13 +17,13 @@ warnings.filterwarnings("ignore")
 
 class MyTests(qutest.QUT_ST):
 
-    def pre(self):
+    def setUp(self):
         nq = 3  # number of qubits
         precondition = qiskit.QuantumCircuit(nq)
 
         return precondition
 
-    def post(self):
+    def expected(self):
         expected = np.zeros((8, 8))
         expected[0, 0] = 0.5
         expected[7, 7] = 0.5
@@ -34,18 +35,18 @@ class MyTests(qutest.QUT_ST):
 
 # class MyTests(qutest.QUT_PT):
 #
-#     def pre(self):
+#     def setUp(self):
 #         nq = 3  # number of qubits
 #         precondition = qiskit.QuantumCircuit(nq)
 #
 #         return precondition
 #
-#     def post(self):
-#         expected = quantum_subprogram(self.pre())
+#     def expected(self):
+#         expected = quantum_subprogram(self.setUp())
 #
 #         # import matplotlib.pyplot as plt
-#         # aaa = Choi(expected).data
-#         # aaa1 =PTM(expected).data
+#         # aaa = Choi(expected).output_data
+#         # aaa1 =PTM(expected).output_data
 #         # plt.imshow(np.real(aaa1))
 #         # plt.show()
 #
@@ -155,20 +156,20 @@ def main1():
                         shots=shots)
         test4.run(quantum_subprogram_mut3)
 
-        res_1.append(test1.data['fid'])
-        res_2.append(test2.data['fid'])
-        res_3.append(test3.data['fid'])
-        res_4.append(test4.data['fid'])
+        res_1.append(test1.output_data['fid'])
+        res_2.append(test2.output_data['fid'])
+        res_3.append(test3.output_data['fid'])
+        res_4.append(test4.output_data['fid'])
 
-        rho_1.append(test1.data['rho'])
-        rho_2.append(test2.data['rho'])
-        rho_3.append(test3.data['rho'])
-        rho_4.append(test4.data['rho'])
+        rho_1.append(test1.output_data['rho'])
+        rho_2.append(test2.output_data['rho'])
+        rho_3.append(test3.output_data['rho'])
+        rho_4.append(test4.output_data['rho'])
 
-        data_1.append(test1.data)
-        data_2.append(test2.data)
-        data_3.append(test3.data)
-        data_4.append(test4.data)
+        data_1.append(test1.output_data)
+        data_2.append(test2.output_data)
+        data_3.append(test3.output_data)
+        data_4.append(test4.output_data)
 
         print("---------------------------------")
         print("Test on the backend with noise")
@@ -196,20 +197,20 @@ def main1():
                         shots=shots)
         test4.run(quantum_subprogram_mut3)
 
-        res_1_n.append(test1.data['fid'])
-        res_2_n.append(test2.data['fid'])
-        res_3_n.append(test3.data['fid'])
-        res_4_n.append(test4.data['fid'])
+        res_1_n.append(test1.output_data['fid'])
+        res_2_n.append(test2.output_data['fid'])
+        res_3_n.append(test3.output_data['fid'])
+        res_4_n.append(test4.output_data['fid'])
 
-        rho_1_n.append(test1.data['rho'])
-        rho_2_n.append(test2.data['rho'])
-        rho_3_n.append(test3.data['rho'])
-        rho_4_n.append(test4.data['rho'])
+        rho_1_n.append(test1.output_data['rho'])
+        rho_2_n.append(test2.output_data['rho'])
+        rho_3_n.append(test3.output_data['rho'])
+        rho_4_n.append(test4.output_data['rho'])
 
-        data_1_n.append(test1.data)
-        data_2_n.append(test2.data)
-        data_3_n.append(test3.data)
-        data_4_n.append(test4.data)
+        data_1_n.append(test1.output_data)
+        data_2_n.append(test2.output_data)
+        data_3_n.append(test3.output_data)
+        data_4_n.append(test4.output_data)
 
     l1 = []
     l2 = []
@@ -329,23 +330,11 @@ def main1():
     np.save('t4_n.npy', t4_n)
     np.save('num_shots.npy', num_shots)
 
+    make_plot()
 
-def main2():
-
-    test1 = MyTests(backend=AerSimulator(),
-                    shots=1)
-
-    aaa = test1.post()
-    plt.imshow(np.real(aaa), cmap=mpl.colormaps['bwr'], norm=colors.CenteredNorm())
-    plt.xticks([])
-    plt.yticks([])
-    plt.show()
-
-    print(np.max(aaa))
-    print(np.min(aaa))
 
 if __name__ == '__main__':
 
     main1()
-    # main2()
+
 
