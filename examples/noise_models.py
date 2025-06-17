@@ -1,8 +1,7 @@
 import numpy as np
-from qiskit_ibm_runtime.fake_provider import FakeVigoV2, FakePerth, FakeSydneyV2, FakeMelbourneV2
+from qiskit_ibm_runtime.fake_provider import FakeSydneyV2
 from qiskit_aer import noise
-from qiskit_aer.noise import (NoiseModel, QuantumError, ReadoutError,
-    pauli_error, depolarizing_error, thermal_relaxation_error)
+from qiskit_aer.noise import (NoiseModel, depolarizing_error)
 
 def scale_noise(factor, noise_model):
 
