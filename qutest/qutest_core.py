@@ -234,7 +234,7 @@ class QUT_PROJ(QUT, ABC):
     ...     def test_1(self):
     ...         quantum_input = qiskit.QuantumCircuit(1)
     ...         quantum_input = quantum_subprogram(quantum_input)
-    ...         self.assertEqual['RelFreqCounts'](quantum_input, [0.5, 0.5])
+    ...         self.assertEqual(quantum_input, [0.5, 0.5])
     >>>
     >>> MyTests(backend=AerSimulator(), shots=2000).run()
     <BLANKLINE>
@@ -305,9 +305,10 @@ class QUTest(object):
     ...     def test_1(self):
     ...         quantum_input = qiskit.QuantumCircuit(1)
     ...         quantum_input = quantum_subprogram(quantum_input)
-    ...         self.assertEqual['RelFreqCounts'](quantum_input, [0.5, 0.5])
+    ...         self.assertEqual(quantum_input, np.array([0.5, 0.5]))
     >>>
     >>> MyTests(backend=AerSimulator(), shots=2000).run()
+    QUT_PROJ
     <BLANKLINE>
     {GREEN}[PASSED]: with a 0.999 probability of passing.{RESET}
     """
@@ -327,7 +328,7 @@ class QUTest(object):
 
     def _identify_context(self, circuit, value):
 
-        if isinstance(value, np.ndarray) and value.ndim == 1:
+        if (isinstance(value, np.ndarray) and value.ndim == 1) or isinstance(value, list):
             print('QUT_PROJ')
             return QUT_PROJ
         if (isinstance(value, qiskit.quantum_info.DensityMatrix) or
